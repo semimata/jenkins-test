@@ -1,0 +1,47 @@
+version: "3.7" 
+
+volumes:
+  db-data:
+networks:
+  instavote:
+    driver: bridge
+services:
+ vote:
+   image: initcron/vote:v4
+   ports:
+     - 5000:80
+   depends_on:
+     - redis
+   networks:
+     - instavote
+
+ redis:
+   image: redis:alpine
+   networks:
+     - instavote
+
+ db:
+   image: postgres:9.4
+   environment:
+     POSTGRES_HOST_AUTH_METHOD: 'trust'
+   volumes:
+     - "db-data:/var/lib/postgressql/data"
+   networks:
+     - instavote
+
+ result:
+   image: initcron/result:master
+   ports:
+     - 5001:4000
+   depends_on:
+     - db
+   networks:
+     - instavote
+     
+ worker:
+   image: initcron/worker:latest
+   depends_on:
+     - redis
+     - db
+   networks:
+     - instavote
