@@ -156,7 +156,7 @@ pipeline{
             steps{
                 echo 'Running Unit Test on vote app'
                 dir('vote'){
-                    sh 'pip install -r requirement.txt'
+                    sh 'pip install -r requirements.txt'
                     sh 'nosetests -v'
                 }
             }
